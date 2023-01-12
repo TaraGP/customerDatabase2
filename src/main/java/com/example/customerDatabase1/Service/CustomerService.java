@@ -93,7 +93,7 @@ public class CustomerService {
     public Optional<Customer> getCustomer(Integer billingAccountNumber)
     {
       if(customerRepository.existsById(billingAccountNumber))
-            return customerRepository.findById(billingAccountNumber);
+            return Optional.ofNullable(customerRepository.findById(billingAccountNumber).get());
       else
             return null;
     }

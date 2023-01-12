@@ -1,6 +1,5 @@
 package com.example.customerDatabase1.ConfigCassandra;
 
-
 import com.solacesystems.jms.SolConnectionFactory;
 import com.solacesystems.jms.SolJmsUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,6 @@ public class SolaceConfig {
     @Value("${solace.jms.clientPassword}")
     private String password;
 
-
     public SolConnectionFactory solConnectionFactory() throws Exception {
         SolConnectionFactory connectionFactory = SolJmsUtility.createConnectionFactory();
         connectionFactory.setHost(host);
@@ -43,12 +41,9 @@ public class SolaceConfig {
         CachingConnectionFactory ccf=null;
         try {
             ccf = new CachingConnectionFactory(solConnectionFactory());
-
         }
         catch (Exception e){
-
         }
         return new JmsTemplate(ccf);
-
     }
 }

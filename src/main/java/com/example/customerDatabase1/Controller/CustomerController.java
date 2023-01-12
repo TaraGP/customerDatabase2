@@ -4,7 +4,8 @@ package com.example.customerDatabase1.Controller;
 import com.example.customerDatabase1.Entity.Customer;
 import com.example.customerDatabase1.Service.CustomerService;
 import com.example.customerDatabase1.errorstatus.ErrorStatus;
-import jakarta.validation.Valid;
+
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
