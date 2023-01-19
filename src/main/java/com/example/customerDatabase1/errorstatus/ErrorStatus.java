@@ -1,22 +1,14 @@
 package com.example.customerDatabase1.errorstatus;
 
+import com.example.customerDatabase1.Entity.Customer;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ErrorStatus {
     private HttpStatus httpStatus;
-    public ErrorStatus(HttpStatus httpStatus)
-    {
-        this.httpStatus=httpStatus;
-    }
-
-    public HttpStatus getHttpStatus()
-    {
-        return httpStatus;
-    }
-
-    public void setHttpStatus(HttpStatus httpStatus)
-    {
-        this.httpStatus=httpStatus;
-    }
 
 }

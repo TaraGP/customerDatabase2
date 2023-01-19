@@ -1,12 +1,12 @@
 package com.example.customerDatabase1.Service;
 
-
 import com.example.customerDatabase1.Entity.Customer;
 import com.example.customerDatabase1.Repository.CustomerRepository;
 import com.example.customerDatabase1.errorstatus.ErrorStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,9 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class CustomerService {
+public class
+
+CustomerService {
     @Autowired
     private JmsTemplate jmsTemplate;
     @Autowired
@@ -25,20 +27,16 @@ public class CustomerService {
     @Value("#{${state.list}}")
     Map<String, String> stateList;
 
-    public ErrorStatus addCustomer(Customer customer, String conversionId)
+    public ResponseEntity addCustomer(Customer customer, String conversation_id)
     {
-
         int length = (int) (Math.log10(customer.getZip()) + 1);
-
-        if((length==5) && (customer.getPhone().length()==10)&& (conversionId!=null) && (customer.getZip()!=0))
+        if((length==5) && (customer.getPhone().length()==10)&& (conversation_id!=null) && (customer.getZip()!=0))
         {
             int generatedBillingNumber;
             do {
                 generatedBillingNumber = (int)(new Random().nextInt(999999999));
-
             }while(isBillingNumberExist(generatedBillingNumber));
             customer.setBillNo(generatedBillingNumber);
-
             //check if state has shortname or full name
             if(customer.getState().length()!=2)
             {
@@ -49,30 +47,27 @@ public class CustomerService {
                 else
                 {
                     jmsTemplate.convertAndSend("Queue", customer.toString());
-                    return new ErrorStatus(HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("State doesn't exist",HttpStatus.BAD_REQUEST);
                 }
             }
             else {
                 if (!(stateList.containsValue(customer.getState())))
                 {
                     jmsTemplate.convertAndSend("Queue", customer.toString());
-                    return new ErrorStatus(HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("state value doesn't exist",HttpStatus.BAD_REQUEST);
                 }
             }
-            customer.setConversation_id(conversionId);
+            customer.setConversation_id(conversation_id);
             customerRepository.save(customer);
             jmsTemplate.convertAndSend("Queue", customer.toString());
-            return null;
+            return new ResponseEntity(customer,HttpStatus.OK);
         }
-
         else
         {
             jmsTemplate.convertAndSend("Queue", customer.toString());
-            return new ErrorStatus(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Pls check zip code/ phone number",HttpStatus.BAD_REQUEST);
         }
-
     }
-
 
     public  boolean isBillingNumberExist(int generatedBillingNumber)
     {
@@ -82,25 +77,22 @@ public class CustomerService {
             return false;
     }
 
-    public void deleteCustomer(Integer billingAccountNumber)
-    {
-        if(customerRepository.existsById(billingAccountNumber))
-        {
-            customerRepository.deleteById(billingAccountNumber);
-        }
-    }
 
-    public Optional<Customer> getCustomer(Integer billingAccountNumber)
+    public ResponseEntity getCustomer(int billingAccountNumber)
     {
       if(customerRepository.existsById(billingAccountNumber))
-            return Optional.ofNullable(customerRepository.findById(billingAccountNumber).get());
+            return new ResponseEntity<>(customerRepository.findById(billingAccountNumber),HttpStatus.OK);
       else
-            return null;
+          return new ResponseEntity<>("Customer not found",HttpStatus.NOT_FOUND);
     }
 
-    public Customer getCustomerByPhoneNumber(String phoneNumber)
+    public ResponseEntity getCustomerByPhoneNumber(String phoneNumber)
     {
-        return customerRepository.findByPhone(phoneNumber);
+        //Customer customer=customerRepository.findByPhone(phoneNumber);
+        if(customerRepository.existsByPhone(phoneNumber))
+            return new ResponseEntity<>(customerRepository.findByPhone(phoneNumber),HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Customer not found",HttpStatus.NOT_FOUND);
     }
 
     public List<Customer> getCustomers()
@@ -132,7 +124,7 @@ public class CustomerService {
             return false;
     }
 
-    public ErrorStatus updateCustomer(int billingAccountNumber,Customer customer)
+    public ResponseEntity updateCustomer(int billingAccountNumber,Customer customer)
     {
         if (customerRepository.existsById(billingAccountNumber))
         {
@@ -165,7 +157,8 @@ public class CustomerService {
                     }
                     else
                     {
-                        return  new ErrorStatus(HttpStatus.BAD_REQUEST);
+                        jmsTemplate.convertAndSend("Queue", customer.toString());
+                        return new ResponseEntity<>("State doesn't exist",HttpStatus.BAD_REQUEST);
                     }
                 }
                 else {
@@ -175,19 +168,24 @@ public class CustomerService {
                     }
                     else
                     {
-                        return  new ErrorStatus(HttpStatus.BAD_REQUEST);
+                        jmsTemplate.convertAndSend("Queue", customer.toString());
+                        return new ResponseEntity<>("State is not in the list",HttpStatus.BAD_REQUEST);
                     }
                 }
             }
             if (customer.getEmail() != null) {
                 cust.setEmail(customer.getEmail());
             }
+            if(customer.getPhone()!=null){
+                cust.setPhone(customer.getPhone());
+            }
             customerRepository.save(cust);
             return null;
         }
         else
         {
-            return new ErrorStatus(HttpStatus.NOT_FOUND);
+            jmsTemplate.convertAndSend("Queue", customer.toString());
+            return new ResponseEntity<>("State is not in the list",HttpStatus.NOT_FOUND);
         }
     }
 }

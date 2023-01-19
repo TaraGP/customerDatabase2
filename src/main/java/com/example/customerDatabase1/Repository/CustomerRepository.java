@@ -10,12 +10,5 @@ import java.util.List;
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Customer findById(int billingAccountNumber);
     Customer findByPhone(String phoneNumber);
-
-   /* boolean existsById(Integer billingAccountNumber);
-
-    void deleteById(Integer billingAccountNumber);
-
-    void save(Customer cust);
-
-    List<Customer> findAll();*/
+    boolean existsByPhone(String phone);
 }
