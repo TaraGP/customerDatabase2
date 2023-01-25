@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.JmsTemplate;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +19,6 @@ import java.util.Random;
 public class
 
 CustomerService {
-    @Autowired
-    private JmsTemplate jmsTemplate;
     @Autowired
     CustomerRepository customerRepository;
 
@@ -46,25 +44,21 @@ CustomerService {
                 }
                 else
                 {
-                    jmsTemplate.convertAndSend("Queue", customer.toString());
                     return new ResponseEntity<>("State doesn't exist",HttpStatus.BAD_REQUEST);
                 }
             }
             else {
                 if (!(stateList.containsValue(customer.getState())))
                 {
-                    jmsTemplate.convertAndSend("Queue", customer.toString());
                     return new ResponseEntity<>("state value doesn't exist",HttpStatus.BAD_REQUEST);
                 }
             }
             customer.setConversation_id(conversation_id);
             customerRepository.save(customer);
-            jmsTemplate.convertAndSend("Queue", customer.toString());
             return new ResponseEntity(customer,HttpStatus.OK);
         }
         else
         {
-            jmsTemplate.convertAndSend("Queue", customer.toString());
             return new ResponseEntity<>("Pls check zip code/ phone number",HttpStatus.BAD_REQUEST);
         }
     }
@@ -88,7 +82,6 @@ CustomerService {
 
     public ResponseEntity getCustomerByPhoneNumber(String phoneNumber)
     {
-        //Customer customer=customerRepository.findByPhone(phoneNumber);
         if(customerRepository.existsByPhone(phoneNumber))
             return new ResponseEntity<>(customerRepository.findByPhone(phoneNumber),HttpStatus.OK);
         else
@@ -157,7 +150,6 @@ CustomerService {
                     }
                     else
                     {
-                        jmsTemplate.convertAndSend("Queue", customer.toString());
                         return new ResponseEntity<>("State doesn't exist",HttpStatus.BAD_REQUEST);
                     }
                 }
@@ -168,7 +160,6 @@ CustomerService {
                     }
                     else
                     {
-                        jmsTemplate.convertAndSend("Queue", customer.toString());
                         return new ResponseEntity<>("State is not in the list",HttpStatus.BAD_REQUEST);
                     }
                 }
@@ -184,7 +175,6 @@ CustomerService {
         }
         else
         {
-            jmsTemplate.convertAndSend("Queue", customer.toString());
             return new ResponseEntity<>("State is not in the list",HttpStatus.NOT_FOUND);
         }
     }

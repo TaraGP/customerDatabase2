@@ -47,15 +47,7 @@ public class CustomerController  {       //used to define a controller and to in
         return mav;
     }
 
-    /*
-    @GetMapping(value= "/updateCustomer")
-    public Customer updateCustomer()
-    {
-        ModelAndView mav = new ModelAndView("UpdateCustomer");
-        Customer newCustomer = new Customer();
-        mav.addObject("customer", customerService.updateCustomer(newCustomer.getBillNo(), newCustomer));
-        return newCustomer;
-    }*/
+
     @PostMapping("/addCustomer")
     public ModelAndView addCustomer(@ModelAttribute("customer") Customer customer) {
         ModelAndView mav = new ModelAndView("redirect:addCustomer");
