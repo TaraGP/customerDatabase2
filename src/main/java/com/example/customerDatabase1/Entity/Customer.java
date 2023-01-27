@@ -20,7 +20,6 @@ public class Customer {
     @Column(name="bill_acc_no")
     private int billNo;
 
-
     @Column(name="first_name")
     private String fname;
 
@@ -46,8 +45,6 @@ public class Customer {
     @Column(name="phone")
     @Size(min=10, max=10)
     private String phone;
-
-
 
     @Column(name="zip")
     private int zip;
