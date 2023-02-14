@@ -20,7 +20,8 @@
                 <form th:action="@{/addCustomer}" th:object="${customer}" th:method="post">
                      <div class="row">
                         <div class="form-group col-md-8">
-                            <label for="fname" class="col-form-label">fname</label> <input type="text" th:field="*{fname}" class="form-control" id="fname" placeholder="fname">
+                            <label for="fname" class="col-form-label">fname</label>
+                            <input type="text" th:field="*{fname}" class="form-control" id="fname" placeholder="fname">
                         </div>
                         <div class="form-group col-md-8">
                             <label for="lname" class="col-form-label">lname</label> <input type="text" th:field="*{lname}" class="form-control" id="lname" placeholder="lname">
@@ -51,6 +52,7 @@
                         </div>
                         <div class="col-md-6">
                             <input type="submit" class="btn btn-primary" value="Add Customer">
+                            <!--button type="submit" class="btn btn-info col-2"> Add customer</button>-->
                         </div>
 
                     </div>
